@@ -1,0 +1,24 @@
+{
+  "name": "store-manager",
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=dev tsx watch src/index.ts",
+    "start": "cross-env NODE_ENV=prod node ./dist/src/index.js",
+    "pretty": "prettier . --write",
+    "lint": "eslint . --ext .ts",
+    "test": "cross-env NODE_ENV=test vitest",
+    "build": "tsc && tsc-alias",
+    "postbuild": "copyfiles -u 1 src/templates/**/* dist/src"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.6",
+    "hono": "^4.11.1",
+    "mongoose": "^9.0.2",
+    "prettier": "^3.7.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "tsx": "^4.7.1",
+    "typescript": "^5.8.3"
+  }
+}
