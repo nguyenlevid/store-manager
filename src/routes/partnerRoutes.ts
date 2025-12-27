@@ -12,8 +12,8 @@ import { Hono } from 'hono';
 const partnerRoutes = new Hono();
 
 partnerRoutes
-  .post('/', ...createPartner) // POST/api/partner
-  .post('/partners', ...createPartners) // POST/api/partner/partners
+  .post('/', ...createPartner) // POST /api/partner
+  .post('/partners', ...createPartners) // POST /api/partner/partners
   .get('/:id', ...getPartnerById) // GET /api/partner/:id
   .get('/', ...getPartners) // GET /api/partner
   .put('/:id', ...updatePartner) // PUT /api/partner/:id

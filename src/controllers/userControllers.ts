@@ -3,28 +3,18 @@ import { createFactory } from 'hono/factory';
 
 const factory = createFactory();
 
-// POST 1 Item
-export const createItem = factory.createHandlers(async (c) => {
+// POST 1 User
+export const createUser = factory.createHandlers(async (c) => {
   const body = await getBody(c);
 
   return c.json(
-    { createType: 'item', message: `Body received: ${JSON.stringify(body)}` },
-    200,
-  );
-});
-
-// POST Items
-export const createItems = factory.createHandlers(async (c) => {
-  const body = await getBody(c);
-
-  return c.json(
-    { createType: 'items', message: `Body received: ${JSON.stringify(body)}` },
+    { createType: 'user', message: `Body received: ${JSON.stringify(body)}` },
     200,
   );
 });
 
 // PUT (Update)
-export const updateItem = factory.createHandlers(async (c) => {
+export const updateUser = factory.createHandlers(async (c) => {
   const body = await getBody(c);
   const params = await getParams(c);
 
@@ -37,33 +27,33 @@ export const updateItem = factory.createHandlers(async (c) => {
 });
 
 // DELETE
-export const deleteItem = factory.createHandlers(async (c) => {
+export const deleteUser = factory.createHandlers(async (c) => {
   const params = await getParams(c);
 
   return c.json({ message: `Successfully deleted` }, 200);
 });
 
 // GET by ID
-export const getItemById = factory.createHandlers(async (c) => {
+export const getUserById = factory.createHandlers(async (c) => {
   const queries = await getQuery(c);
   const params = await getParams(c);
 
   return c.json(
     {
-      getType: `item`,
+      getType: 'user',
       message: `Queries received: ${JSON.stringify(queries)}, Params received: ${JSON.stringify(params)}`,
     },
     200,
   );
 });
 
-// GET Items by Queries
-export const getItems = factory.createHandlers(async (c) => {
+// GET Users by Queries
+export const getUsers = factory.createHandlers(async (c) => {
   const queries = await getQuery(c);
 
   return c.json(
     {
-      getType: `items`,
+      getType: 'users',
       message: `Queries received: ${JSON.stringify(queries)}`,
     },
     200,

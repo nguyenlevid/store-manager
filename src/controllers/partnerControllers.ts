@@ -34,7 +34,7 @@ export const getPartnerById = factory.createHandlers(async (c) => {
   const queries = await getQuery(c);
 
   return c.json({
-    createType: 'partner',
+    getType: 'partner',
     message: `Queries received: ${JSON.stringify(queries)}`,
   });
 });
@@ -45,7 +45,7 @@ export const getPartners = factory.createHandlers(async (c) => {
 
   return c.json(
     {
-      createType: 'partners',
+      getType: 'partners',
       message: `Queries received: ${JSON.stringify(queries)}`,
     },
     200,
