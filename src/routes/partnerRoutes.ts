@@ -17,6 +17,6 @@ partnerRoutes
   .get('/:id', ...getPartnerById) // GET /api/partner/:id
   .get('/', ...getPartners) // GET /api/partner
   .put('/:id', ...updatePartner) // PUT /api/partner/:id
-  .delete('/:id', ...deletePartner); // Delete /api/partner/:id
+  .delete('/:id', ...deletePartner); // DELETE /api/partner/:id
 
 export default partnerRoutes;
