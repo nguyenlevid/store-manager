@@ -45,4 +45,9 @@ export {
 } from './database';
 
 // Local database (for direct access when needed)
-export { localDb, LocalCollection, type BaseDocument } from './localDb';
+export {
+  localDb,
+  LocalCollection,
+  ValidationError,
+  type BaseDocument,
+} from './localDb';

@@ -83,6 +83,75 @@ export interface UserDoc extends BaseDocument {
 }
 
 // ============================================
+// Validation Schema & Error Types
+// ============================================
+
+export class ValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
+interface FieldSchema {
+  required?: boolean;
+  enum?: any[];
+  unique?: boolean;
+  type?: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'date';
+}
+
+interface ValidationSchema {
+  [field: string]: FieldSchema;
+}
+
+// ============================================
+// Validation Schemas for Each Collection
+// ============================================
+
+const itemSchema: ValidationSchema = {
+  name: { required: true, type: 'string' },
+  unitPrice: { required: true, type: 'number' },
+  quantity: { required: true, type: 'number' },
+  unit: { required: true, type: 'string' },
+  tags: { required: true, type: 'array' },
+  imageUrl: { required: true, type: 'array' },
+};
+
+const partnerSchema: ValidationSchema = {
+  partnerType: { required: true, enum: ['client', 'supplier'] },
+  partnerName: { required: true, type: 'string', unique: true },
+  phoneNumber: { required: true, type: 'string' },
+  address: { required: true, type: 'string' },
+  email: { unique: true },
+};
+
+const transactionSchema: ValidationSchema = {
+  clientId: { required: true, type: 'string' },
+  item: { required: true, type: 'array' },
+  totalPrice: { required: true, type: 'number' },
+  status: {
+    required: true,
+    enum: ['pending', 'itemsDelivered', 'paymentCompleted', 'cancelled'],
+  },
+};
+
+const importSchema: ValidationSchema = {
+  supplierId: { required: true, type: 'string' },
+  item: { required: true, type: 'array' },
+  totalPrice: { required: true, type: 'number' },
+  status: { required: true, enum: ['pending', 'done'] },
+};
+
+const userSchema: ValidationSchema = {
+  name: { required: true, type: 'string' },
+  email: { required: true, type: 'string', unique: true },
+  password: { required: true, type: 'string' },
+  birthDate: { required: true, type: 'date' },
+  appRole: { required: true, enum: ['dev', 'admin', 'user'] },
+  accessRole: { required: true, type: 'array' },
+};
+
+// ============================================
 // Local Utility Functions
 // ============================================
 
@@ -133,6 +202,67 @@ function localMatchesQuery<T>(doc: T, query: Partial<T>): boolean {
   return true;
 }
 
+function validateDocument<T>(
+  doc: any,
+  schema: ValidationSchema,
+  existingDocs: T[],
+  excludeId?: string,
+): void {
+  for (const [field, rules] of Object.entries(schema)) {
+    const value = (doc as any)[field];
+
+    // Check required fields
+    if (
+      rules.required &&
+      (value === undefined || value === null || value === '')
+    ) {
+      throw new ValidationError(`Field '${field}' is required`);
+    }
+
+    // Skip further validation if value is undefined/null (optional field)
+    if (value === undefined || value === null) continue;
+
+    // Check enum values
+    if (rules.enum && !rules.enum.includes(value)) {
+      throw new ValidationError(
+        `Field '${field}' must be one of: ${rules.enum.join(', ')}. Got: ${value}`,
+      );
+    }
+
+    // Check type
+    if (rules.type) {
+      const actualType = Array.isArray(value)
+        ? 'array'
+        : value instanceof Date
+          ? 'date'
+          : typeof value;
+
+      if (actualType !== rules.type) {
+        throw new ValidationError(
+          `Field '${field}' must be of type '${rules.type}'. Got: ${actualType}`,
+        );
+      }
+    }
+
+    // Check unique constraint
+    if (rules.unique) {
+      const duplicate = existingDocs.find((existing) => {
+        const existingValue = (existing as any)[field];
+        const existingId = (existing as any)._id;
+        return (
+          existingValue === value && (!excludeId || existingId !== excludeId)
+        );
+      });
+
+      if (duplicate) {
+        throw new ValidationError(
+          `Field '${field}' must be unique. Value '${value}' already exists`,
+        );
+      }
+    }
+  }
+}
+
 // ============================================
 // LocalCollection Class (Mongoose-like API)
 // ============================================
@@ -140,9 +270,15 @@ function localMatchesQuery<T>(doc: T, query: Partial<T>): boolean {
 export class LocalCollection<T extends BaseDocument> {
   private filePath: string;
   private data: T[] = [];
+  private schema?: ValidationSchema;
 
-  constructor(collectionName: string, dataDir: string) {
+  constructor(
+    collectionName: string,
+    dataDir: string,
+    schema?: ValidationSchema,
+  ) {
     this.filePath = path.join(dataDir, `local-${collectionName}.json`);
+    this.schema = schema;
     this.load();
   }
 
@@ -203,6 +339,11 @@ export class LocalCollection<T extends BaseDocument> {
   }
 
   async create(input: Omit<T, '_id' | 'createdAt' | 'updatedAt'>): Promise<T> {
+    // Validate input if schema is provided
+    if (this.schema) {
+      validateDocument(input, this.schema, this.data);
+    }
+
     const now = new Date();
     const doc = {
       ...input,
@@ -219,6 +360,13 @@ export class LocalCollection<T extends BaseDocument> {
   async insertMany(
     inputs: Omit<T, '_id' | 'createdAt' | 'updatedAt'>[],
   ): Promise<T[]> {
+    // Validate all inputs if schema is provided
+    if (this.schema) {
+      for (const input of inputs) {
+        validateDocument(input, this.schema, this.data);
+      }
+    }
+
     const now = new Date();
     const docs = inputs.map(
       (input) =>
@@ -249,6 +397,11 @@ export class LocalCollection<T extends BaseDocument> {
       ...update,
       updatedAt: new Date(),
     };
+
+    // Validate update if schema is provided
+    if (this.schema) {
+      validateDocument(updatedDoc, this.schema, this.data, id);
+    }
 
     this.data[index] = updatedDoc;
     this.save();
@@ -317,14 +470,23 @@ if (!fs.existsSync(LOCAL_DATA_DIR)) {
 }
 
 export const localDb = {
-  items: new LocalCollection<ItemDoc>('items', LOCAL_DATA_DIR),
-  partners: new LocalCollection<PartnerDoc>('partners', LOCAL_DATA_DIR),
+  items: new LocalCollection<ItemDoc>('items', LOCAL_DATA_DIR, itemSchema),
+  partners: new LocalCollection<PartnerDoc>(
+    'partners',
+    LOCAL_DATA_DIR,
+    partnerSchema,
+  ),
   transactions: new LocalCollection<TransactionDoc>(
     'transactions',
     LOCAL_DATA_DIR,
+    transactionSchema,
   ),
-  imports: new LocalCollection<ImportDoc>('imports', LOCAL_DATA_DIR),
-  users: new LocalCollection<UserDoc>('users', LOCAL_DATA_DIR),
+  imports: new LocalCollection<ImportDoc>(
+    'imports',
+    LOCAL_DATA_DIR,
+    importSchema,
+  ),
+  users: new LocalCollection<UserDoc>('users', LOCAL_DATA_DIR, userSchema),
 };
 
 export default localDb;
