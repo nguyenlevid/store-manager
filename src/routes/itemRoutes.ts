@@ -1,8 +1,10 @@
-import { createItem } from '@/controllers/itemControllers';
+import { createItem, getItemById } from '@/controllers/itemControllers';
 import { Hono } from 'hono';
 
 const itemRoutes = new Hono();
 
-itemRoutes.post('/create-item', ...createItem); // POST /api/item/create-item
+itemRoutes
+  .post('/', ...createItem) // POST /api/item
+  .get('/:id', ...getItemById); // GET /api/item/:id
 
 export default itemRoutes;
