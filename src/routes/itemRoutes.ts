@@ -12,9 +12,9 @@ const itemRoutes = new Hono();
 
 itemRoutes
   .post('/', ...createItem) // POST /api/item
+  .post('/items', ...createItems) // POST /api/item/items
   .get('/', ...getItems) // GET /api/item/
   .get('/:id', ...getItemById) // GET /api/item/:id
-  .post('/items', ...createItems) // POST /api/item/items
   .put('/:id', ...updateItem) // PUT /api/item/:id
   .delete('/:id', ...deleteItem); // DELETE /api/item/:id
 

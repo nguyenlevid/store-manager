@@ -3,7 +3,7 @@ import { createFactory } from 'hono/factory';
 
 const factory = createFactory();
 
-// POST 1 ITEM
+// POST 1 Item
 export const createItem = factory.createHandlers(async (c) => {
   const body = await getBody(c);
 
@@ -13,7 +13,7 @@ export const createItem = factory.createHandlers(async (c) => {
   );
 });
 
-// POST ITEMS
+// POST Items
 export const createItems = factory.createHandlers(async (c) => {
   const body = await getBody(c);
 
@@ -56,7 +56,7 @@ export const getItemById = factory.createHandlers(async (c) => {
   );
 });
 
-// GET ALL
+// GET Items by Queries
 export const getItems = factory.createHandlers(async (c) => {
   const queries = await getQuery(c);
 
