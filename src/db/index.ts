@@ -1,13 +1,37 @@
 /**
  * Database Module Entry Point
  *
- * Import from here for simplified access:
+ * RECOMMENDED: Import models from dbMaster for auto-routing:
  * ```typescript
- * import { db, connectDatabase, isLocalMode } from './db';
+ * import { Item, Partner, User } from './db/dbMaster';
+ * const items = await Item.find();
+ * ```
+ *
+ * Alternative: Use the full db object:
+ * ```typescript
+ * import { db, connectDatabase } from './db';
  * ```
  */
 
-// Main database interface
+// ⭐ RECOMMENDED: Auto-routing models
+export {
+  Item,
+  Partner,
+  Transaction,
+  Import,
+  User,
+  type ItemDoc,
+  type PartnerDoc,
+  type TransactionDoc,
+  type ImportDoc,
+  type UserDoc,
+  type PartnerType,
+  type TransactionStatus,
+  type ImportStatus,
+  type AppRole,
+} from './dbMaster';
+
+// Database utilities
 export {
   db,
   getDb,
@@ -21,17 +45,4 @@ export {
 } from './database';
 
 // Local database (for direct access when needed)
-export {
-  localDb,
-  LocalCollection,
-  type LocalBaseDocument,
-  type LocalItemDoc,
-  type LocalPartnerDoc,
-  type LocalTransactionDoc,
-  type LocalImportDoc,
-  type LocalUserDoc,
-  type LocalPartnerType,
-  type LocalTransactionStatus,
-  type LocalImportStatus,
-  type LocalAppRole,
-} from './localDb';
+export { localDb, LocalCollection, type BaseDocument } from './localDb';

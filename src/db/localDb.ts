@@ -2,16 +2,16 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // ============================================
-// Local Type Definitions (matching Mongoose models)
+// Type Definitions (matching Mongoose models)
 // ============================================
 
-export interface LocalBaseDocument {
+export interface BaseDocument {
   _id: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface LocalItemDoc extends LocalBaseDocument {
+export interface ItemDoc extends BaseDocument {
   name: string;
   description?: string;
   unitPrice: number;
@@ -22,23 +22,23 @@ export interface LocalItemDoc extends LocalBaseDocument {
   imageUrl: string[];
 }
 
-export type LocalPartnerType = 'client' | 'supplier';
+export type PartnerType = 'client' | 'supplier';
 
-export interface LocalPartnerDoc extends LocalBaseDocument {
-  partnerType: LocalPartnerType;
+export interface PartnerDoc extends BaseDocument {
+  partnerType: PartnerType;
   partnerName: string;
   phoneNumber: string;
   email?: string;
   address: string;
 }
 
-export type LocalTransactionStatus =
+export type TransactionStatus =
   | 'pending'
   | 'itemsDelivered'
   | 'paymentCompleted'
   | 'cancelled';
 
-export interface LocalTransactionDoc extends LocalBaseDocument {
+export interface TransactionDoc extends BaseDocument {
   clientId: string;
   item: {
     itemId: string;
@@ -49,12 +49,12 @@ export interface LocalTransactionDoc extends LocalBaseDocument {
   totalPrice: number;
   itemsDeliveredDate?: Date;
   paymentCompletedDate?: Date;
-  status: LocalTransactionStatus;
+  status: TransactionStatus;
 }
 
-export type LocalImportStatus = 'pending' | 'done';
+export type ImportStatus = 'pending' | 'done';
 
-export interface LocalImportDoc extends LocalBaseDocument {
+export interface ImportDoc extends BaseDocument {
   supplierId: string;
   item: {
     itemId: string;
@@ -63,13 +63,13 @@ export interface LocalImportDoc extends LocalBaseDocument {
     totalPrice: number;
   }[];
   totalPrice: number;
-  status: LocalImportStatus;
+  status: ImportStatus;
   completedDate?: Date;
 }
 
-export type LocalAppRole = 'dev' | 'admin' | 'user';
+export type AppRole = 'dev' | 'admin' | 'user';
 
-export interface LocalUserDoc extends LocalBaseDocument {
+export interface UserDoc extends BaseDocument {
   name: string;
   username?: string;
   email: string;
@@ -77,7 +77,7 @@ export interface LocalUserDoc extends LocalBaseDocument {
   phoneNumber?: string;
   birthDate: Date;
   business?: string;
-  appRole: LocalAppRole;
+  appRole: AppRole;
   accessRole: string[];
   resetPasswordToken?: string;
 }
@@ -137,7 +137,7 @@ function localMatchesQuery<T>(doc: T, query: Partial<T>): boolean {
 // LocalCollection Class (Mongoose-like API)
 // ============================================
 
-export class LocalCollection<T extends LocalBaseDocument> {
+export class LocalCollection<T extends BaseDocument> {
   private filePath: string;
   private data: T[] = [];
 
@@ -317,14 +317,14 @@ if (!fs.existsSync(LOCAL_DATA_DIR)) {
 }
 
 export const localDb = {
-  items: new LocalCollection<LocalItemDoc>('items', LOCAL_DATA_DIR),
-  partners: new LocalCollection<LocalPartnerDoc>('partners', LOCAL_DATA_DIR),
-  transactions: new LocalCollection<LocalTransactionDoc>(
+  items: new LocalCollection<ItemDoc>('items', LOCAL_DATA_DIR),
+  partners: new LocalCollection<PartnerDoc>('partners', LOCAL_DATA_DIR),
+  transactions: new LocalCollection<TransactionDoc>(
     'transactions',
     LOCAL_DATA_DIR,
   ),
-  imports: new LocalCollection<LocalImportDoc>('imports', LOCAL_DATA_DIR),
-  users: new LocalCollection<LocalUserDoc>('users', LOCAL_DATA_DIR),
+  imports: new LocalCollection<ImportDoc>('imports', LOCAL_DATA_DIR),
+  users: new LocalCollection<UserDoc>('users', LOCAL_DATA_DIR),
 };
 
 export default localDb;
