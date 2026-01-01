@@ -3,49 +3,40 @@ import { createFactory } from 'hono/factory';
 
 const factory = createFactory();
 
-// POST 1 Partner
-export const createPartner = factory.createHandlers(async (c) => {
+// POST 1 Transaction
+export const createTransaction = factory.createHandlers(async (c) => {
   const body = await getBody(c);
 
   return c.json(
     {
-      createType: 'partner',
+      createType: 'transaction',
       message: `Body received: ${JSON.stringify(body)}`,
     },
     200,
   );
 });
 
-// POST Partners
-export const createPartners = factory.createHandlers(async (c) => {
-  const body = await getBody(c);
+// GET Transaction by Id
+export const getTransactionById = factory.createHandlers(async (c) => {
+  const queries = await getQuery(c);
+  const params = await getParams(c);
 
   return c.json(
     {
-      createType: 'partners',
-      message: `Body received: ${JSON.stringify(body)}`,
+      getType: 'transaction',
+      message: `Queries received: ${JSON.stringify(queries)}, Params received: ${JSON.stringify(params)}`,
     },
     200,
   );
 });
 
-// GET by ID
-export const getPartnerById = factory.createHandlers(async (c) => {
-  const queries = await getQuery(c);
-
-  return c.json({
-    getType: 'partner',
-    message: `Queries received: ${JSON.stringify(queries)}`,
-  });
-});
-
-// GET Partners by Queries
-export const getPartners = factory.createHandlers(async (c) => {
+// GET Transactions by Queries
+export const getTransactions = factory.createHandlers(async (c) => {
   const queries = await getQuery(c);
 
   return c.json(
     {
-      getType: 'partners',
+      getType: `transactions`,
       message: `Queries received: ${JSON.stringify(queries)}`,
     },
     200,
@@ -53,7 +44,7 @@ export const getPartners = factory.createHandlers(async (c) => {
 });
 
 // PUT (Update)
-export const updatePartner = factory.createHandlers(async (c) => {
+export const updateTransaction = factory.createHandlers(async (c) => {
   const body = await getBody(c);
   const params = await getParams(c);
 
@@ -66,7 +57,7 @@ export const updatePartner = factory.createHandlers(async (c) => {
 });
 
 // DELETE
-export const deletePartner = factory.createHandlers(async (c) => {
+export const deleteTransaction = factory.createHandlers(async (c) => {
   const params = await getParams(c);
 
   return c.json({ message: `Successfully deleted` }, 200);

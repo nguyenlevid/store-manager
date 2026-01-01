@@ -3,6 +3,9 @@ import { Hono } from 'hono';
 import { env } from './config/env';
 import itemRoutes from './routes/itemRoutes';
 import partnerRoutes from './routes/partnerRoutes';
+import userRoutes from './routes/userRoutes';
+import transactionRoutes from './routes/transactionRoutes';
+import importRoutes from './routes/importRoutes';
 import { connectDatabase } from './db';
 
 const app = new Hono();
@@ -13,6 +16,9 @@ app.get('/', (c) => {
 
 app.route('/api/item', itemRoutes);
 app.route('/api/partner', partnerRoutes);
+app.route('/api/user', userRoutes);
+app.route('/api/transaction', transactionRoutes);
+app.route('/api/import', importRoutes);
 
 // Connect to database before starting server
 connectDatabase()
