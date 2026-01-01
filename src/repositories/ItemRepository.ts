@@ -10,6 +10,13 @@ export class ItemRepository extends BaseRepository<ItemDocument> {
   // CUSTOM QUERIES
   // ============================================
 
+  async createItem(itemData: Partial<ItemDocument>) {
+    return this.create(itemData);
+  }
+
+  async findById(id: string) {
+    return this.findOne({ _id: id });
+  }
   /**
    * Find items by tags
    */

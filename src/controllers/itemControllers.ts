@@ -1,16 +1,25 @@
+import { itemRepository } from '@/repositories';
 import { getBody, getParams, getQuery } from '@/utils/requestUtils';
+import {
+  failureResponse,
+  ResponseCode,
+  successResponse,
+} from '@/utils/responseUtils';
 import { createFactory } from 'hono/factory';
 
 const factory = createFactory();
 
-// POST 1 Item
+// POST
 export const createItem = factory.createHandlers(async (c) => {
   const body = await getBody(c);
 
-  return c.json(
-    { createType: 'item', message: `Body received: ${JSON.stringify(body)}` },
-    200,
-  );
+  try {
+    const item = await itemRepository.createItem(body);
+
+    return successResponse(c, ResponseCode.OK, item);
+  } catch (error) {
+    return failureResponse(c, ResponseCode.DATABASE_ERROR, error);
+  }
 });
 
 // POST Items

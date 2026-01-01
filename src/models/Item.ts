@@ -45,6 +45,7 @@ const itemSchema = new Schema<ItemDocument>(
   { timestamps: true },
 );
 
-itemSchema.index({ tags: 1 }, { unique: true });
+itemSchema.index({ name: 1 }, { unique: true });
+itemSchema.index({ tags: 1 });
 export const Item =
   mongoose.models.Item || mongoose.model<ItemDocument>('Item', itemSchema);
