@@ -3,7 +3,7 @@
  *
  * RECOMMENDED: Use repositories for all database operations:
  * ```typescript
- * import { itemRepository, connectDatabase } from '@/db';
+ * import { itemRepository, connectDatabase } from '../db/index.js';
  *
  * await connectDatabase();
  * const items = await itemRepository.findAll(); // Optimized with lean()
@@ -11,26 +11,22 @@
  *
  * For advanced use cases requiring full Mongoose documents:
  * ```typescript
- * import { Item } from '@/models/Item';
+ * import { Item } from '../models/Item.js';
  * const item = await Item.findById(id); // Full document with methods
  * await item.save();
  * ```
  */
-
 // ============================================
 // DATABASE CONNECTION
 // ============================================
-export { connectDatabase, isDatabaseConnected } from './database';
-
+export { connectDatabase, isDatabaseConnected } from './database.js';
 // ============================================
 // REPOSITORIES (Primary Data Access)
 // ============================================
-export { itemRepository } from '../repositories';
-
-// ============================================
-// TYPE EXPORTS (For TypeScript)
-// ============================================
-export type { PartnerType } from '../models/Partner';
-export type { TransactionStatus } from '../models/Transaction';
-export type { ImportStatus } from '../models/Import';
-export type { AppRole } from '../models/User';
+export {
+  itemRepository,
+  partnerRepository,
+  transactionRepository,
+  importRepository,
+  userRepository,
+} from '../repositories/index.js';

@@ -3,27 +3,20 @@
  *
  * This module provides MongoDB connection and configuration.
  */
-
 import mongoose from 'mongoose';
-import { env, validateEnv } from '@/config/env';
-
+import { env, validateEnv } from '../config/env.js';
 // ============================================
 // Database Connection
 // ============================================
-
 let isConnected = false;
-
-export async function connectDatabase(): Promise<void> {
+export async function connectDatabase() {
   if (isConnected) {
     console.log('[Database] Already connected to MongoDB');
     return;
   }
-
   // Validate environment variables
   validateEnv();
-
   const mongoUri = env.MONGODB_URI;
-
   try {
     console.log('[Database] Connecting to MongoDB...');
     await mongoose.connect(mongoUri, {
@@ -39,7 +32,6 @@ export async function connectDatabase(): Promise<void> {
     throw error;
   }
 }
-
-export function isDatabaseConnected(): boolean {
+export function isDatabaseConnected() {
   return isConnected && mongoose.connection.readyState === 1;
 }

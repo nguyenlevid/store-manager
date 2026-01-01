@@ -1,16 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
-
-export type PartnerType = 'client' | 'supplier';
-
-export interface PartnerDocument extends Document {
-  partnerType: PartnerType;
-  partnerName: string;
-  phoneNumber: string;
-  email: string;
-  address: string;
-}
-
-const partnerSchema = new Schema<PartnerDocument>(
+import mongoose, { Schema } from 'mongoose';
+const partnerSchema = new Schema(
   {
     partnerType: {
       type: String,
@@ -35,10 +24,7 @@ const partnerSchema = new Schema<PartnerDocument>(
   },
   { timestamps: true },
 );
-
 partnerSchema.index({ partnerName: 1 }, { unique: true });
 partnerSchema.index({ email: 1 }, { unique: true, sparse: true });
-
 export const Partner =
-  mongoose.models.Partner ||
-  mongoose.model<PartnerDocument>('Partner', partnerSchema);
+  mongoose.models.Partner || mongoose.model('Partner', partnerSchema);

@@ -1,17 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
-
-export interface ItemDocument extends Document {
-  name: string;
-  description: string;
-  unitPrice: number;
-  origin: string;
-  tags: string[];
-  quantity: number;
-  unit: string;
-  imageUrl: string[];
-}
-
-const itemSchema = new Schema<ItemDocument>(
+import mongoose, { Schema } from 'mongoose';
+const itemSchema = new Schema(
   {
     name: {
       type: String,
@@ -44,7 +32,5 @@ const itemSchema = new Schema<ItemDocument>(
   },
   { timestamps: true },
 );
-
 itemSchema.index({ tags: 1 }, { unique: true });
-export const Item =
-  mongoose.models.Item || mongoose.model<ItemDocument>('Item', itemSchema);
+export const Item = mongoose.models.Item || mongoose.model('Item', itemSchema);

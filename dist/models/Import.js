@@ -1,21 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
-
-export type ImportStatus = 'pending' | 'done';
-
-export interface ImportDocument extends Document {
-  supplierId: mongoose.Types.ObjectId;
-  item: {
-    itemId: mongoose.Types.ObjectId;
-    quantity: number;
-    unitPrice: number;
-    totalPrice: number;
-  }[];
-  totalPrice: number;
-  status: ImportStatus;
-  completedDate: Date;
-}
-
-const importSchema = new Schema<ImportDocument>(
+import mongoose, { Schema } from 'mongoose';
+const importSchema = new Schema(
   {
     supplierId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -58,11 +42,8 @@ const importSchema = new Schema<ImportDocument>(
   },
   { timestamps: true },
 );
-
 importSchema.index({ supplierId: 1 }, { unique: true });
 importSchema.index({ completedDate: 1 });
 importSchema.index({ status: 1 });
-
 export const Import =
-  mongoose.models.Import ||
-  mongoose.model<ImportDocument>('Import', importSchema);
+  mongoose.models.Import || mongoose.model('Import', importSchema);
