@@ -3,10 +3,12 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=dev tsx watch src/index.ts",
+    "dev:seed": "cross-env NODE_ENV=dev SEED_DB=true tsx watch src/index.ts",
     "start": "cross-env NODE_ENV=prod node ./dist/src/index.js",
     "pretty": "prettier . --write",
     "lint": "eslint . --ext .ts",
     "test": "cross-env NODE_ENV=test vitest",
+    "test:seed": "cross-env NODE_ENV=test SEED_DB=true vitest",
     "build": "tsc && tsc-alias",
     "postbuild": "copyfiles -u 1 src/templates/**/* dist/src"
   },
@@ -14,6 +16,7 @@
     "@hono/node-server": "^1.19.6",
     "copyfiles": "^2.4.1",
     "cross-env": "^10.1.0",
+    "fs": "^0.0.1-security",
     "hono": "^4.11.1",
     "mongoose": "^9.0.2",
     "prettier": "^3.7.4",

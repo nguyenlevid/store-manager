@@ -1,5 +1,6 @@
 import { getBody, getParams, getQuery } from '@/utils/requestUtils';
 import { createFactory } from 'hono/factory';
+import { Item, ValidationError } from '@/db';
 
 const factory = createFactory();
 
@@ -39,8 +40,33 @@ export const updateItem = factory.createHandlers(async (c) => {
 // DELETE
 export const deleteItem = factory.createHandlers(async (c) => {
   const params = await getParams(c);
+  const { id } = params;
 
-  return c.json({ message: `Successfully deleted` }, 200);
+  if (!id) {
+    return c.json({ error: 'Item ID is required' }, 400);
+  }
+
+  try {
+    const deletedItem = await Item.findByIdAndDelete(id);
+
+    if (!deletedItem) {
+      return c.json({ error: 'Item not found' }, 404);
+    }
+
+    return c.json(
+      {
+        message: 'Item deleted successfully',
+        item: deletedItem,
+      },
+      200,
+    );
+  } catch (error) {
+    console.error('[deleteItem] Error:', error);
+    return c.json(
+      { error: 'Failed to delete item', details: (error as Error).message },
+      500,
+    );
+  }
 });
 
 // GET by ID
