@@ -6,6 +6,8 @@ import partnerRoutes from './routes/partnerRoutes';
 import userRoutes from './routes/userRoutes';
 import transactionRoutes from './routes/transactionRoutes';
 import importRoutes from './routes/importRoutes';
+import businessRoutes from './routes/businessRoutes';
+import storeHouseRoutes from './routes/storeHouseRoutes';
 import { connectDatabase } from './db';
 
 const app = new Hono();
@@ -19,6 +21,8 @@ app.route('/api/partner', partnerRoutes);
 app.route('/api/user', userRoutes);
 app.route('/api/transaction', transactionRoutes);
 app.route('/api/import', importRoutes);
+app.route('/api/business', businessRoutes);
+app.route('/api/storehouse', storeHouseRoutes);
 
 // Connect to database before starting server
 connectDatabase()

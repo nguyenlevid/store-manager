@@ -21,6 +21,8 @@ export const enum ResponseCode {
   UNAUTHORIZED_CSRF = 4303,
   NOT_PRIVILEGED_ENOUGH = 4304,
   USER_NOT_FOUND = 4400,
+  BUSINESS_NOT_FOUND = 4401,
+  STOREHOUSE_NOT_FOUND = 4402,
   NO_ACTIVE_MEMBERSHIP_FOUND = 4410,
   SERVER_ERROR = 5000,
   EMAIL_SERVICE_ERROR = 6000,
@@ -71,6 +73,8 @@ const ErrorGroupMap: Record<ResponseCode, ClientResponseCode> = {
   [ResponseCode.NOT_PRIVILEGED_ENOUGH]: ClientResponseCode.FORBIDDEN,
   // 404: NOT_FOUND
   [ResponseCode.USER_NOT_FOUND]: ClientResponseCode.NOT_FOUND,
+  [ResponseCode.BUSINESS_NOT_FOUND]: ClientResponseCode.NOT_FOUND,
+  [ResponseCode.STOREHOUSE_NOT_FOUND]: ClientResponseCode.NOT_FOUND,
   // 409: CONFLICT
   // 422: UNPROCESSABLE_ENTITY
   [ResponseCode.NO_ACTIVE_MEMBERSHIP_FOUND]: ClientResponseCode.NOT_FOUND,
@@ -107,13 +111,16 @@ const errMsgMapperImpl = (code: ResponseCode): string => {
       return 'Invalid query input';
     case ResponseCode.NOT_PRIVILEGED_ENOUGH:
       return 'Not privileged enough';
-
     case ResponseCode.INVALID_ACCOUNT_OR_PASSWORD:
       return 'Invalid account or password';
     case ResponseCode.INVALID_PASSWORD:
       return 'Invalid password';
     case ResponseCode.USER_NOT_FOUND:
       return 'User not found';
+    case ResponseCode.BUSINESS_NOT_FOUND:
+      return 'Business not found';
+    case ResponseCode.STOREHOUSE_NOT_FOUND:
+      return 'StoreHouse not found';
     case ResponseCode.EMAIL_ALREADY_EXISTS:
       return 'Email already exists';
     case ResponseCode.EMAIL_SERVICE_ERROR:

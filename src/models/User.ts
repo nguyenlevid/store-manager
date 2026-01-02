@@ -10,12 +10,10 @@ export interface UserDocument extends Document {
   phoneNumber: string;
   birthDate: Date;
   business: mongoose.Types.ObjectId;
+  storeHouses: mongoose.Types.ObjectId[];
   appRole: AppRole;
   accessRole: mongoose.Types.ObjectId[];
-  resetPasswordToken: {
-    type: mongoose.Schema.Types.ObjectId;
-    ref: 'TokenStore';
-  };
+  resetPasswordToken: mongoose.Schema.Types.ObjectId;
   // METHODS
   verifyPassword(inputPassword: string): Promise<boolean>;
 }
@@ -62,6 +60,11 @@ const userSchema = new Schema<UserDocument>(
       type: Schema.Types.ObjectId,
       ref: 'Business',
       required: true,
+    },
+    storeHouses: {
+      type: [Schema.Types.ObjectId],
+      ref: 'StoreHouse',
+      default: [],
     },
     resetPasswordToken: {
       type: Schema.Types.ObjectId,

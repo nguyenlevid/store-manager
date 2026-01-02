@@ -9,6 +9,7 @@ export interface ItemDocument extends Document {
   quantity: number;
   unit: string;
   imageUrl: string[];
+  storeHouse: mongoose.Types.ObjectId;
 }
 
 const itemSchema = new Schema<ItemDocument>(
@@ -41,11 +42,20 @@ const itemSchema = new Schema<ItemDocument>(
     imageUrl: {
       type: [String],
     },
+    storeHouse: {
+      type: Schema.Types.ObjectId,
+      ref: 'StoreHouse',
+      required: true,
+    },
   },
   { timestamps: true },
 );
 
 itemSchema.index({ name: 1 }, { unique: true });
 itemSchema.index({ tags: 1 });
+itemSchema.index({ unitPrice: 1 });
+itemSchema.index({ quantity: 1 });
+itemSchema.index({ storeHouse: 1 });
+
 export const Item =
   mongoose.models.Item || mongoose.model<ItemDocument>('Item', itemSchema);

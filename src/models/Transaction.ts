@@ -65,7 +65,7 @@ const transactionSchema = new Schema<TransactionDocument>(
   { timestamps: true },
 );
 
-transactionSchema.index({ clientId: 1 }, { unique: true });
+transactionSchema.index({ clientId: 1 });
 transactionSchema.index({ status: 1 });
 transactionSchema.index({ itemsDeliveredDate: 1 });
 transactionSchema.index({ paymentCompletedDate: 1 });

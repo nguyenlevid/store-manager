@@ -19,7 +19,7 @@ const importSchema = new Schema<ImportDocument>(
   {
     supplierId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Supplier',
+      ref: 'Partner',
       required: true,
     },
     item: [
@@ -59,7 +59,7 @@ const importSchema = new Schema<ImportDocument>(
   { timestamps: true },
 );
 
-importSchema.index({ supplierId: 1 }, { unique: true });
+importSchema.index({ supplierId: 1 });
 importSchema.index({ completedDate: 1 });
 importSchema.index({ status: 1 });
 

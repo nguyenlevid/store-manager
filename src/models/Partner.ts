@@ -8,6 +8,7 @@ export interface PartnerDocument extends Document {
   phoneNumber: string;
   email: string;
   address: string;
+  worksWithBusiness: mongoose.Types.ObjectId;
 }
 
 const partnerSchema = new Schema<PartnerDocument>(
@@ -32,12 +33,18 @@ const partnerSchema = new Schema<PartnerDocument>(
       type: String,
       required: true,
     },
+    worksWithBusiness: {
+      type: mongoose.Types.ObjectId,
+      ref: 'Business',
+      required: true,
+    },
   },
   { timestamps: true },
 );
 
 partnerSchema.index({ partnerName: 1 }, { unique: true });
 partnerSchema.index({ email: 1 }, { unique: true, sparse: true });
+partnerSchema.index({ worksWithBusiness: 1 });
 
 export const Partner =
   mongoose.models.Partner ||
