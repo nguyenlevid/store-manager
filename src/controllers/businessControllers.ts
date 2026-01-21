@@ -1,4 +1,4 @@
-import { businessRepository } from '@/repositories/businessRepository';
+import { businessRepository } from '@/repositories/BusinessRepository';
 import { getBody, getParams, getQuery } from '@/utils/requestUtils';
 import {
   failureResponse,

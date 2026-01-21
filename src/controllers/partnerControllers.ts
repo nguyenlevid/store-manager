@@ -1,4 +1,11 @@
+import { itemRepository } from '@/repositories';
+import { partnerRepository } from '@/repositories/PartnerRepository';
 import { getBody, getParams, getQuery } from '@/utils/requestUtils';
+import {
+  failureResponse,
+  ResponseCode,
+  successResponse,
+} from '@/utils/responseUtils';
 import { createFactory } from 'hono/factory';
 
 const factory = createFactory();
@@ -7,67 +14,77 @@ const factory = createFactory();
 export const createPartner = factory.createHandlers(async (c) => {
   const body = await getBody(c);
 
-  return c.json(
-    {
-      createType: 'partner',
-      message: `Body received: ${JSON.stringify(body)}`,
-    },
-    200,
-  );
+  try {
+    const partner = await partnerRepository.createPartner(body);
+    return successResponse(c, ResponseCode.OK, partner);
+  } catch (error) {
+    return failureResponse(c, ResponseCode.DATABASE_ERROR, error);
+  }
 });
 
 // POST Partners
 export const createPartners = factory.createHandlers(async (c) => {
   const body = await getBody(c);
+  const inputPartners = body['partners'];
 
-  return c.json(
-    {
-      createType: 'partners',
-      message: `Body received: ${JSON.stringify(body)}`,
-    },
-    200,
-  );
+  try {
+    const partners = await partnerRepository.createPartners(inputPartners);
+    return successResponse(c, ResponseCode.OK, partners);
+  } catch (error) {
+    return failureResponse(c, ResponseCode.DATABASE_ERROR, error);
+  }
 });
 
 // GET by ID
 export const getPartnerById = factory.createHandlers(async (c) => {
-  const queries = await getQuery(c);
+  const params = await getQuery(c);
+  const { id } = params;
 
-  return c.json({
-    getType: 'partner',
-    message: `Queries received: ${JSON.stringify(queries)}`,
-  });
+  try {
+    const partner = await partnerRepository.findById(id);
+
+    return successResponse(c, ResponseCode.OK, partner);
+  } catch (error) {
+    return failureResponse(c, ResponseCode.DATABASE_ERROR, error);
+  }
 });
 
 // GET Partners by Queries
 export const getPartners = factory.createHandlers(async (c) => {
   const queries = await getQuery(c);
 
-  return c.json(
-    {
-      getType: 'partners',
-      message: `Queries received: ${JSON.stringify(queries)}`,
-    },
-    200,
-  );
+  try {
+    const partners = await partnerRepository.findPartners(queries);
+
+    return successResponse(c, ResponseCode.OK, partners);
+  } catch (error) {
+    return failureResponse(c, ResponseCode.DATABASE_ERROR, error);
+  }
 });
 
 // PUT (Update)
 export const updatePartner = factory.createHandlers(async (c) => {
   const body = await getBody(c);
   const params = await getParams(c);
+  const { id } = params;
 
-  return c.json(
-    {
-      message: `Body received: ${JSON.stringify(body)} Params received: ${JSON.stringify(params)}`,
-    },
-    200,
-  );
+  try {
+    const partner = await partnerRepository.updateById(id, body);
+    return successResponse(c, ResponseCode.OK, partner);
+  } catch (error) {
+    return failureResponse(c, ResponseCode.DATABASE_ERROR, error);
+  }
 });
 
-// DELETE
+// DELETE BY ID
 export const deletePartner = factory.createHandlers(async (c) => {
   const params = await getParams(c);
+  const { id } = params;
 
-  return c.json({ message: `Successfully deleted` }, 200);
+  try {
+    const partner = await partnerRepository.deleteById(id);
+    return successResponse(c, ResponseCode.OK, partner);
+  } catch (error) {
+    return failureResponse(c, ResponseCode.DATABASE_ERROR, error);
+  }
 });

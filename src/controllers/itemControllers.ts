@@ -25,57 +25,68 @@ export const createItem = factory.createHandlers(async (c) => {
 // POST Items
 export const createItems = factory.createHandlers(async (c) => {
   const body = await getBody(c);
+  const inputItems = body['items'];
+  try {
+    const items = await itemRepository.createItems(inputItems);
 
-  return c.json(
-    { createType: 'items', message: `Body received: ${JSON.stringify(body)}` },
-    200,
-  );
+    return successResponse(c, ResponseCode.OK, items);
+  } catch (error) {
+    return failureResponse(c, ResponseCode.DATABASE_ERROR, error);
+  }
 });
 
 // PUT (Update)
 export const updateItem = factory.createHandlers(async (c) => {
   const body = await getBody(c);
   const params = await getParams(c);
+  const { id } = params;
 
-  return c.json(
-    {
-      message: `Body received: ${JSON.stringify(body)} Params received: ${JSON.stringify(params)}`,
-    },
-    200,
-  );
+  try {
+    const item = await itemRepository.updateById(id, body);
+
+    return successResponse(c, ResponseCode.OK, item);
+  } catch (error) {
+    return failureResponse(c, ResponseCode.DATABASE_ERROR, error);
+  }
 });
 
-// DELETE
+// DELETE BY ID
 export const deleteItem = factory.createHandlers(async (c) => {
   const params = await getParams(c);
   const { id } = params;
 
-  return c.json({ message: 'Deleted item with id: ' + id }, 200);
+  try {
+    const item = await itemRepository.deleteById(id);
+    return successResponse(c, ResponseCode.OK, item);
+  } catch (error) {
+    return failureResponse(c, ResponseCode.DATABASE_ERROR, error);
+  }
 });
 
 // GET by ID
 export const getItemById = factory.createHandlers(async (c) => {
-  const queries = await getQuery(c);
   const params = await getParams(c);
 
-  return c.json(
-    {
-      getType: `item`,
-      message: `Queries received: ${JSON.stringify(queries)}, Params received: ${JSON.stringify(params)}`,
-    },
-    200,
-  );
+  const { id } = params;
+
+  try {
+    const item = await itemRepository.findById(id);
+
+    return successResponse(c, ResponseCode.OK, item);
+  } catch (error) {
+    return failureResponse(c, ResponseCode.DATABASE_ERROR, error);
+  }
 });
 
 // GET Items by Queries
 export const getItems = factory.createHandlers(async (c) => {
   const queries = await getQuery(c);
 
-  return c.json(
-    {
-      getType: `items`,
-      message: `Queries received: ${JSON.stringify(queries)}`,
-    },
-    200,
-  );
+  try {
+    const items = await itemRepository.findItems(queries);
+
+    return successResponse(c, ResponseCode.OK, items);
+  } catch (error) {
+    return failureResponse(c, ResponseCode.DATABASE_ERROR, error);
+  }
 });

@@ -14,6 +14,10 @@ export class ItemRepository extends BaseRepository<ItemDocument> {
     return this.create(itemData);
   }
 
+  async createItems(itemsData: [Partial<ItemDocument>]) {
+    return this.createMany(itemsData);
+  }
+
   async findById(id: string) {
     return this.findOne({ _id: id });
   }
@@ -22,6 +26,13 @@ export class ItemRepository extends BaseRepository<ItemDocument> {
    */
   async findByTags(tags: string[]) {
     return this.findAll({ tags: { $in: tags } });
+  }
+
+  /**
+   * Find items by queries
+   */
+  async findItems(queries: any = {}) {
+    return this.findAll(queries);
   }
 
   /**
@@ -47,13 +58,6 @@ export class ItemRepository extends BaseRepository<ItemDocument> {
     return this.findAll({
       name: { $regex: searchTerm, $options: 'i' },
     });
-  }
-
-  /**
-   * Update item quantity (increment/decrement)
-   */
-  async updateQuantity(id: string, quantityChange: number) {
-    return this.updateById(id, { $inc: { quantity: quantityChange } });
   }
 
   /**

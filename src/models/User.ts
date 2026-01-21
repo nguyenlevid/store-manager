@@ -51,7 +51,7 @@ const userSchema = new Schema<UserDocument>(
       type: [
         {
           type: Schema.Types.ObjectId,
-          ref: 'CustomRole',
+          ref: 'Cu  stomRole',
         },
       ],
       default: [],
